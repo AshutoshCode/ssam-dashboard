@@ -5,6 +5,18 @@ import yfinance as yf
 import pandas as pd
 import numpy as np
 import sys
+from statsmodels.tsa.arima.model import ARIMA
+
+
+def arima_forecast(ticker, periods=5):
+    # Download 1 year of daily closing prices
+    df = yf.download(ticker, period="1y")
+    close = df['Close'].dropna()
+    # Fit ARIMA model (order can be tuned)
+    model = ARIMA(close, order=(5,1,0))
+    model_fit = model.fit()
+    forecast = model_fit.forecast(steps=periods)
+    return forecast
 
 def fetch_data(ticker, period='2mo', interval='1d'):
     data = yf.download(ticker, period=period, interval=interval)
